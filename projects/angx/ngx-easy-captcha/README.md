@@ -1,16 +1,15 @@
 # @angx/ngx-easy-captcha
 
-<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/RecaptchaLogo.svg/640px-RecaptchaLogo.svg.png" alt="Ngx Easy Recaptcha" width="200" height="160"/> <img src="https://storage.googleapis.com/zenn-user-upload/8ebc32eb3c69-20230326.png" alt="Ngx Easy Recaptcha" width="200" style="margin-left:200px"/>
-
-
 Easy Captcha Implementation for Angular (Supports Angular 18)!
+
+![Angular Easy Captcha](https://raw.githubusercontent.com/angx-libs/ngx-easycaptcha/master/src/assets/google.png) ![Angular Easy Captcha](https://raw.githubusercontent.com/angx-libs/ngx-easycaptcha/master/src/assets/cloudflare.png)
 
 @angx/ngx-easy-captcha has a very easy implementation for both [Google Recaptcha](https://www.google.com/recaptcha/about) and [CloudFlare Turnstile](https://www.cloudflare.com/en-in/products/turnstile).
 
 ## Features ##
 
 - Captcha implementation as an Angular Service.
-- Can switch between Google's Recaptcha service and CloudFlare's Turnstile in seconds.
+- Can switch between Google's Recaptcha V3 and CloudFlare's Turnstile in seconds.
 - Supports Angular 18.
 - Dynamic JavaScript loading only when required and destroys scripts and DOM Elements on Unsubscribe.
 
@@ -26,7 +25,7 @@ npm i @angx/ngx-easy-captcha --save
 
 #### Google Recaptcha ####
 
-STRING_INITIALIZER is the action (login, register, enquiryform etc.) that is protected by the captcha service. See [Example](https://github.com/angx-libs/ngx-easy-captcha/tree/master/src/app/google-recaptcha-example)
+STRING_INITIALIZER is the action (login, register, enquiryform etc.) that is protected by the captcha service. See [Detailed Example](https://github.com/angx-libs/ngx-easy-captcha/tree/master/src/app/google-recaptcha-example)
 
 ```
 @Component({
@@ -59,7 +58,7 @@ export class GoogleRecaptchaExampleComponent implements OnDestroy {
 ```
 #### CloudFlare TurnStile ####
 
-STRING_INITIALIZER is the id of the div element where captcha needs to be shown. If multiple forms are protected on same page, use id with common prefixes and pass that prefix (In below example, pass element id: "cloudflare-captcha"). See [Example](https://github.com/angx-libs/ngx-easy-captcha/tree/master/src/app/cloudflare-turnstile-example)
+STRING_INITIALIZER is the id of the div element where captcha needs to be shown. If multiple forms are protected on same page, use id with common prefixes and pass that prefix (In the below example, pass element id: "cloudflare-captcha"). See [Detailed Example](https://github.com/angx-libs/ngx-easy-captcha/tree/master/src/app/cloudflare-turnstile-example)
 
 ```
  <div class="mt-3" id="cloudflare-captcha-signup"></div>

@@ -6,9 +6,6 @@
     "paths": {
       "@angx/ngx-easy-captcha": [
         "./dist/angx/ngx-easy-captcha"
-      ],
-      "@angx/ngx-easy-recaptcha": [
-        "./dist/angx/ngx-easy-recaptcha"
       ]
     },
     "outDir": "./dist/out-tsc",
