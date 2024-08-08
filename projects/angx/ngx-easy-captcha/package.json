@@ -1,6 +1,6 @@
 {
   "name": "@angx/ngx-easy-captcha",
-  "version": "1.0.4",
+  "version": "1.0.8",
   "peerDependencies": {
     "@angular/common": "^18.1.0",
     "@angular/core": "^18.1.0",

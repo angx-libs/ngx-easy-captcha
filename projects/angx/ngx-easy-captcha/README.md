@@ -2,7 +2,7 @@
 
 Easy Captcha Implementation for Angular (Supports Angular 18)!
 
-![Angular Easy Captcha](https://raw.githubusercontent.com/angx-libs/ngx-easycaptcha/master/src/assets/google.png) ![Angular Easy Captcha](https://raw.githubusercontent.com/angx-libs/ngx-easycaptcha/master/src/assets/cloudflare.png)
+![Angular Easy Captcha](https://raw.githubusercontent.com/angx-libs/ngx-easy-captcha/master/src/assets/google.PNG) ![Angular Easy Captcha](https://raw.githubusercontent.com/angx-libs/ngx-easy-captcha/master/src/assets/cloudflare.PNG)
 
 @angx/ngx-easy-captcha has a very easy implementation for both [Google Recaptcha](https://www.google.com/recaptcha/about) and [CloudFlare Turnstile](https://www.cloudflare.com/en-in/products/turnstile).
 
