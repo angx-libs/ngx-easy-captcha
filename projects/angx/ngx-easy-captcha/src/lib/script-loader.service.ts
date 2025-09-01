@@ -2,8 +2,8 @@ import { isPlatformBrowser } from '@angular/common';
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { DynamicScripts } from './enums/dynamic-scripts-enum';
 import { ElementSelectorType } from './enums/element-selector-type';
-import { ScriptLoaderResponse } from './interfaces/script-loader-response';
-import { Script, ElementSelector } from './interfaces/scripts';
+import { IScriptLoaderResponse } from './interfaces/script-loader-response';
+import { IScript, IElementSelector } from './interfaces/scripts';
 import { ScriptStore } from './script-store';
 
 declare var window: any;
@@ -13,17 +13,17 @@ declare var window: any;
 })
 export class ScriptLoaderService {
   private isBrowser = false;
-  private scripts: Script[] = ScriptStore;
+  private scripts: IScript[] = ScriptStore;
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {
     this.isBrowser = isPlatformBrowser(this.platformId);
   }
 
-  private getScript(name: DynamicScripts): Script | undefined {
+  private getScript(name: DynamicScripts): IScript | undefined {
     return ScriptStore.find(s => s.name == name);
   }
 
-  removeScriptAndTraces(name: DynamicScripts, ...elementSelectors: ElementSelector[]) {
+  removeScriptAndTraces(name: DynamicScripts, ...elementSelectors: IElementSelector[]) {
     const script = this.getScript(name);
     if (this.isBrowser && script) {
       document.getElementById(script.id ?? '')?.remove();
@@ -49,7 +49,7 @@ export class ScriptLoaderService {
     }
   }
 
-  load(siteKey: String, ...scripts: string[]): Promise<ScriptLoaderResponse[]> {
+  load(siteKey: String, ...scripts: string[]): Promise<IScriptLoaderResponse[]> {
     var promises: any[] = [];
     scripts.forEach((scriptName: string) => {
       const script = this.scripts.find(s => s.name === scriptName);
@@ -58,10 +58,10 @@ export class ScriptLoaderService {
       }
       promises.push(this.loadScript(script));
     });
-    return Promise.all<ScriptLoaderResponse>(promises);
+    return Promise.all<IScriptLoaderResponse>(promises);
   }
 
-  loadScript(script: Script | undefined) {
+  loadScript(script: IScript | undefined) {
     if (!script) {
       console.error('Can not load null script');
       return;

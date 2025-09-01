@@ -2,7 +2,7 @@ import { AfterViewInit, Injectable } from '@angular/core';
 import { ScriptLoaderService } from './script-loader.service';
 import { Subject, BehaviorSubject, Observable, finalize } from 'rxjs';
 import { DynamicScripts } from './enums/dynamic-scripts-enum';
-import { ScriptLoaderResponse } from './interfaces/script-loader-response';
+import { IScriptLoaderResponse } from './interfaces/script-loader-response';
 declare var turnstile: any;
 
 @Injectable()
@@ -12,7 +12,7 @@ export class CloudFlareTurnstileService {
     private turnstileWidgetIds: string[] = [];
 
     constructor(private initializerString: String, private scriptLoader: ScriptLoaderService, private captchaSiteKey: String) {
-        this.scriptLoader.load(this.captchaSiteKey, DynamicScripts.CloudFlareTurnstile).then((data: ScriptLoaderResponse[]) => {
+        this.scriptLoader.load(this.captchaSiteKey, DynamicScripts.CloudFlareTurnstile).then((data: IScriptLoaderResponse[]) => {
             if (data && data[0]?.loaded) {
                 this.initializeTurnstilePromise();
             }

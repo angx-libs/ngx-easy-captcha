@@ -3,8 +3,8 @@ import { ScriptLoaderService } from './script-loader.service';
 import { Subject, BehaviorSubject, Observable, finalize } from 'rxjs';
 import { DynamicScripts } from './enums/dynamic-scripts-enum';
 import { ElementSelectorType } from './enums/element-selector-type';
-import { ScriptLoaderResponse } from './interfaces/script-loader-response';
-import { ElementSelector } from './interfaces/scripts';
+import { IScriptLoaderResponse } from './interfaces/script-loader-response';
+import { IElementSelector } from './interfaces/scripts';
 
 declare var grecaptcha: any;
 
@@ -14,7 +14,7 @@ export class GoogleRecaptchaService {
   private recaptchaToken: Subject<string> = new BehaviorSubject<string>('');
 
   constructor(private initializerString: String, private scriptLoader: ScriptLoaderService, private captchaSiteKey: String) {
-    this.scriptLoader.load(this.captchaSiteKey, DynamicScripts.GoogleRecaptcha).then((data: ScriptLoaderResponse[]) => {
+    this.scriptLoader.load(this.captchaSiteKey, DynamicScripts.GoogleRecaptcha).then((data: IScriptLoaderResponse[]) => {
       if (data && data[0]?.loaded) {
         this.initializeRecaptchaPromise();
       }
@@ -28,7 +28,7 @@ export class GoogleRecaptchaService {
   }
 
   private removeRecaptcha() {
-    this.scriptLoader.removeScriptAndTraces(DynamicScripts.GoogleRecaptcha, {name: 'grecaptcha-badge', type: ElementSelectorType.Class} as ElementSelector)
+    this.scriptLoader.removeScriptAndTraces(DynamicScripts.GoogleRecaptcha, {name: 'grecaptcha-badge', type: ElementSelectorType.Class} as IElementSelector)
   }
 
   private initializeRecaptchaPromise() {

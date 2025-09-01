@@ -1,14 +1,12 @@
 {
   "name": "@angx/ngx-easy-captcha",
-  "version": "1.0.8",
+  "version": "2.0.0",
   "peerDependencies": {
-    "@angular/common": "^18.1.0",
-    "@angular/core": "^18.1.0",
+    "@angular/common": "^19.2.14",
+    "@angular/core": "^19.2.14",
     "tslib": "^2.3.0"
   },
-  "dependencies": {
-    
-  },
+  "dependencies": {},
   "donations": "https://buymeacoffee.com/er.abhishek",
   "keywords": [
     "ngx easy captcha",

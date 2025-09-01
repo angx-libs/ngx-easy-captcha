@@ -1,13 +1,11 @@
 import { Component, OnDestroy } from '@angular/core';
-import { CaptchaProvider } from '../../../projects/angx/ngx-easy-captcha/src/lib/enums/captcha-provider';
-import { NgxEasyCaptchaService, CAPTCHA_PROVIDER, CAPTCHA_SITE_KEY, STRING_INITIALIZER } from '../../../projects/angx/ngx-easy-captcha/src/public-api';
+import { CAPTCHA_PROVIDER, CAPTCHA_SITE_KEY, CaptchaProvider, NgxEasyCaptchaService, STRING_INITIALIZER } from '@angx/ngx-easy-captcha';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-google-recaptcha-example',
-  standalone: true,
   imports: [NgClass, RouterLink],
   providers: [NgxEasyCaptchaService,
     { provide: CAPTCHA_PROVIDER, useValue: CaptchaProvider.Google },

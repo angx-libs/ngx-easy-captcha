@@ -1,6 +1,6 @@
 import { ElementSelectorType } from "../enums/element-selector-type";
 
-export interface Script {
+export interface IScript {
     loaded?: boolean;
     name: string;
     src: string;
@@ -9,7 +9,7 @@ export interface Script {
     defer?: boolean;
 }
 
-export interface ElementSelector {
+export interface IElementSelector {
     name: string;
     type: ElementSelectorType;
 }
