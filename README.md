@@ -6,13 +6,31 @@ One Angular service for both [Google reCAPTCHA v3](https://www.google.com/recapt
 
 ### Cloudflare Turnstile
 
-![Cloudflare Turnstile in the demo app](https://raw.githubusercontent.com/angx-libs/ngx-easy-captcha/master/src/assets/cloudflare.PNG)
+Turnstile renders an interactive widget into the container you point it at — here, inside the sign-in form.
+
+![Cloudflare Turnstile widget inside the demo sign-in form, showing Success and a received token](https://raw.githubusercontent.com/angx-libs/ngx-easy-captcha/master/src/assets/cloudflare.PNG)
 
 ### Google reCAPTCHA v3
 
-reCAPTCHA v3 renders no widget — only the badge, bottom right — and the token still arrives on the same stream.
+reCAPTCHA v3 has no challenge for the user to solve, so nothing is rendered into the form. Its only visible element is the reCAPTCHA badge pinned to the bottom-right of the page, as in the screenshot below. The token arrives on the same stream either way.
 
-![Google reCAPTCHA v3 in the demo app](https://raw.githubusercontent.com/angx-libs/ngx-easy-captcha/master/src/assets/google.PNG)
+![Google reCAPTCHA v3 in the demo app: no in-form widget, the reCAPTCHA badge bottom-right, and a received token](https://raw.githubusercontent.com/angx-libs/ngx-easy-captcha/master/src/assets/google.PNG)
+
+The badge is Google's, not this library's, and it appears automatically once the script loads. Google's terms let you hide it only if you show the required attribution text in its place:
+
+```css
+.grecaptcha-badge { visibility: hidden; }
+```
+
+```html
+<small>
+  This site is protected by reCAPTCHA and the Google
+  <a href="https://policies.google.com/privacy">Privacy Policy</a> and
+  <a href="https://policies.google.com/terms">Terms of Service</a> apply.
+</small>
+```
+
+`ngx-easy-captcha` removes the badge for you when the last consumer is destroyed.
 
 ## Features
 
