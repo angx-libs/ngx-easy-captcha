@@ -210,3 +210,19 @@
 		 transform: translateX(20%);
 	}
 }
+/* Token / error readout for the demo. */
+.status {
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-size: 0.85rem;
+  margin-top: 24px;
+  text-align: center;
+}
+
+.status__ok {
+  color: #15803d;
+}
+
+.status__error {
+  color: #b91c1c;
+  word-break: break-word;
+}

@@ -1,102 +1,139 @@
 import { isPlatformBrowser } from '@angular/common';
-import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { DynamicScripts } from './enums/dynamic-scripts-enum';
 import { ElementSelectorType } from './enums/element-selector-type';
-import { IScriptLoaderResponse } from './interfaces/script-loader-response';
-import { IScript, IElementSelector } from './interfaces/scripts';
-import { ScriptStore } from './script-store';
+import type { IScriptLoaderResponse } from './interfaces/script-loader-response';
+import type { IElementSelector, IScript } from './interfaces/scripts';
+import { SITE_KEY_PLACEHOLDER, createScriptStore } from './script-store';
 
-declare var window: any;
+/** Per-script bookkeeping. */
+interface ScriptState {
+  definition: IScript;
+  /** How many live consumers depend on this script. */
+  refCount: number;
+  /** Shared across concurrent callers so only one tag is ever injected. */
+  request?: Promise<IScriptLoaderResponse>;
+  element?: HTMLScriptElement;
+}
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ScriptLoaderService {
-  private isBrowser = false;
-  private scripts: IScript[] = ScriptStore;
+  private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
-    this.isBrowser = isPlatformBrowser(this.platformId);
+  /**
+   * Own copy of the definitions, so substituting a site key can never leak
+   * into another consumer.
+   */
+  private readonly states = new Map<string, ScriptState>(
+    createScriptStore().map((definition) => [definition.name, { definition, refCount: 0 }]),
+  );
+
+  /**
+   * Injects each named script, substituting `siteKey` into its URL, and
+   * registers the caller as a dependent.
+   *
+   * Always resolves - check `loaded` on each response instead of catching.
+   * Every successful `load` must be paired with a `release`, or the script
+   * tag will outlive its consumers.
+   */
+  load(siteKey: string, ...names: string[]): Promise<IScriptLoaderResponse[]> {
+    return Promise.all(names.map((name) => this.loadScript(name, siteKey)));
   }
 
-  private getScript(name: DynamicScripts): IScript | undefined {
-    return ScriptStore.find(s => s.name == name);
-  }
-
-  removeScriptAndTraces(name: DynamicScripts, ...elementSelectors: IElementSelector[]) {
-    const script = this.getScript(name);
-    if (this.isBrowser && script) {
-      document.getElementById(script.id ?? '')?.remove();
-      script.loaded = false;
-      if (elementSelectors && elementSelectors.length > 0) {
-        elementSelectors.forEach(elemSelector => {
-          if (elemSelector.type === ElementSelectorType.Id) {
-            document.getElementById(elemSelector.name)?.remove();
-          } else if (elemSelector.type === ElementSelectorType.Class) {
-            var elementsToRemove = document.getElementsByClassName(elemSelector.name);
-            for (let i = 0; i < elementsToRemove.length; i++) {
-              elementsToRemove[i]?.remove();
-            }
-          }
-        });
-      }
+  loadScript(name: string, siteKey: string): Promise<IScriptLoaderResponse> {
+    const state = this.states.get(name);
+    if (!state) {
+      return Promise.resolve({ script: name, loaded: false, status: 'Unknown script' });
     }
-  }
 
-  removeWindowTraces(name: string) {
-    if (this.isBrowser) {
-      delete window[name];
+    // Resolving rather than hanging matters most during server-side
+    // rendering, where there is no document to append a tag to.
+    if (!this.isBrowser) {
+      return Promise.resolve({ script: name, loaded: false, status: 'Not a browser' });
     }
-  }
 
-  load(siteKey: String, ...scripts: string[]): Promise<IScriptLoaderResponse[]> {
-    var promises: any[] = [];
-    scripts.forEach((scriptName: string) => {
-      const script = this.scripts.find(s => s.name === scriptName);
-      if (script && siteKey) {
-        script.src = script?.src.replace('CAPTCHA_SITE_KEY', siteKey as string);
+    state.refCount++;
+
+    if (state.request) {
+      return state.request;
+    }
+
+    state.request = new Promise<IScriptLoaderResponse>((resolve) => {
+      const element = document.createElement('script');
+      element.id = state.definition.id ?? '';
+      element.type = 'text/javascript';
+      element.src = state.definition.src.replace(
+        SITE_KEY_PLACEHOLDER,
+        encodeURIComponent(siteKey),
+      );
+      // A dynamically injected script is async by default and ignores `defer`
+      // entirely, so `defer` is only honoured when async is switched off.
+      element.async = state.definition.async ?? true;
+      if (!element.async) {
+        element.defer = state.definition.defer ?? false;
       }
-      promises.push(this.loadScript(script));
+      element.onload = () => {
+        state.definition.loaded = true;
+        resolve({ script: name, loaded: true, status: 'Loaded' });
+      };
+      element.onerror = () => {
+        // Clear the cached request so a later consumer can retry.
+        state.request = undefined;
+        resolve({ script: name, loaded: false, status: 'Failed to load' });
+      };
+
+      state.element = element;
+      document.head.appendChild(element);
     });
-    return Promise.all<IScriptLoaderResponse>(promises);
+
+    return state.request;
   }
 
-  loadScript(script: IScript | undefined) {
-    if (!script) {
-      console.error('Can not load null script');
+  /**
+   * Drops one consumer's claim on a script. The tag and any extra elements are
+   * only removed once the last consumer has released it - otherwise a page
+   * with two captcha-protected forms would tear down the shared script as soon
+   * as the first form was destroyed.
+   */
+  release(name: DynamicScripts, ...elementSelectors: IElementSelector[]): void {
+    const state = this.states.get(name);
+    if (!this.isBrowser || !state) {
       return;
     }
-    return new Promise((resolve, reject) => {
-      //resolve if already loaded
-      if (script.loaded) {
-        resolve({ script: script.name, loaded: true, status: 'Already Loaded' });
-      }
-      else {
-        if (this.isBrowser) {
-          let scriptElement = document.createElement('script');
-          scriptElement.id = script.id ?? '';
-          scriptElement.type = 'text/javascript';
-          scriptElement.src = script.src;
-          scriptElement.defer = script.async ?? false;
-          scriptElement.async = script.defer ?? false;
-          if ((scriptElement as any).readyState) {  //IE
-            (scriptElement as any).onreadystatechange = () => {
-              if ((scriptElement as any).readyState === "loaded" || (scriptElement as any).readyState === "complete") {
-                (scriptElement as any).onreadystatechange = null;
-                script.loaded = true;
-                resolve({ script: script.name, loaded: true, status: 'Loaded' });
-              }
-            };
-          } else {  //Others
-            scriptElement.onload = () => {
-              script.loaded = true;
-              resolve({ script: script.name, loaded: true, status: 'Loaded' });
-            };
-          }
-          scriptElement.onerror = (error: any) => resolve({ script: script.name, loaded: false, status: 'Loaded' });
-          document.getElementsByTagName('head')[0].appendChild(scriptElement);
+
+    state.refCount = Math.max(0, state.refCount - 1);
+    if (state.refCount > 0) {
+      return;
+    }
+
+    state.element?.remove();
+    state.element = undefined;
+    state.request = undefined;
+    state.definition.loaded = false;
+
+    for (const selector of elementSelectors) {
+      if (selector.type === ElementSelectorType.Id) {
+        document.getElementById(selector.name)?.remove();
+      } else {
+        // `getElementsByClassName` is live: removing while iterating forward
+        // skips elements, so take a static snapshot first.
+        for (const element of Array.from(document.getElementsByClassName(selector.name))) {
+          element.remove();
         }
       }
-    });
+    }
+  }
+
+  /** True while at least one consumer still depends on `name`. */
+  isInUse(name: DynamicScripts): boolean {
+    return (this.states.get(name)?.refCount ?? 0) > 0;
+  }
+
+  removeWindowTraces(name: string): void {
+    if (this.isBrowser) {
+      delete (window as unknown as Record<string, unknown>)[name];
+    }
   }
 }

@@ -1,43 +1,62 @@
 <section class="hero-section">
-    <div class="container" id="container" [ngClass]="containerClass">
-        <div class="form-container sign-up-container"  [ngClass]="signUpFormClass">
-            <form action="#">
-                <h1>Create Account</h1>
-                <input type="text" placeholder="Name" />
-                <input type="email" placeholder="Email" />
-                <input type="password" placeholder="Password" />
-                <div class="mt-3" id="cloudflare-captcha-signup"></div>
-                <button class="mt-3">Sign Up</button>
-                <a class="mt-3 mb-3 mobile-only-link" [routerLink]="['/google-recaptcha']" fragment="login">Already have an account?</a>
-            </form>
-        </div>
-        <div class="form-container sign-in-container"  [ngClass]="signInFormClass">
-            <form action="#">
-                <h1>Sign in</h1>
-                <input type="email" placeholder="Email" />
-                <input type="password" placeholder="Password" />
-                <a>Forgot your password?</a>
-                <div class="mt-3" id="cloudflare-captcha-signin"></div>
-                <button class="mt-3">Sign In</button>
-                <a class="mt-3 mb-3 mobile-only-link" [routerLink]="['/google-recaptcha']" fragment="register">Don't have an account?</a>
-            </form>
-        </div>
-        <div class="overlay-container">
-            <div class="overlay">
-                <div class="overlay-panel overlay-left">
-                    <h1>Welcome Back!</h1>
-                    <p>To keep using our services, login with your credentials</p>
-                    <button class="ghost" (click)="setSignInFormActive()">Sign In</button>
-                </div>
-                <div class="overlay-panel overlay-right">
-                    <h1>Hello, User!</h1>
-                    <p>Enter your details and start your journey with us</p>
-                    <button class="ghost" (click)="setSignUpFormActive()">Sign Up</button>
-                </div>
-            </div>
-        </div>
+  <div class="container" [class.right-panel-active]="registering()">
+    <div class="form-container sign-up-container" [class.hidden-form-mobile]="!registering()">
+      <form (ngSubmit)="onSubmit()">
+        <h1>Create Account</h1>
+        <input type="text" placeholder="Name" autocomplete="name" />
+        <input type="email" placeholder="Email" autocomplete="email" />
+        <input type="password" placeholder="Password" autocomplete="new-password" />
+        <!--
+          reCAPTCHA v3 is invisible, so there is no element to render into.
+          The token arrives on the service observable instead.
+        -->
+        <button class="mt-3" type="submit">Sign Up</button>
+        <a class="mt-3 mb-3 mobile-only-link" [routerLink]="['/google-recaptcha']" fragment="login">
+          Already have an account?
+        </a>
+      </form>
     </div>
-    <div class="back-button">
-        <a class="mt-3 mb-3" [routerLink]="['/']" fragment="login">Back</a>
+
+    <div class="form-container sign-in-container" [class.hidden-form-mobile]="registering()">
+      <form (ngSubmit)="onSubmit()">
+        <h1>Sign in</h1>
+        <input type="email" placeholder="Email" autocomplete="email" />
+        <input type="password" placeholder="Password" autocomplete="current-password" />
+        <a>Forgot your password?</a>
+        <button class="mt-3" type="submit">Sign In</button>
+        <a class="mt-3 mb-3 mobile-only-link" [routerLink]="['/google-recaptcha']" fragment="register">
+          Don't have an account?
+        </a>
+      </form>
     </div>
-  </section>
+
+    <div class="overlay-container">
+      <div class="overlay">
+        <div class="overlay-panel overlay-left">
+          <h1>Welcome Back!</h1>
+          <p>To keep using our services, login with your credentials</p>
+          <button class="ghost" type="button" (click)="showSignIn()">Sign In</button>
+        </div>
+        <div class="overlay-panel overlay-right">
+          <h1>Hello, User!</h1>
+          <p>Enter your details and start your journey with us</p>
+          <button class="ghost" type="button" (click)="showSignUp()">Sign Up</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="status">
+    @if (error()) {
+      <p class="status__error">{{ error() }}</p>
+    } @else if (token()) {
+      <p class="status__ok">Token received ({{ token().length }} chars)</p>
+    } @else {
+      <p>Waiting for a reCAPTCHA token&hellip;</p>
+    }
+  </div>
+
+  <div class="back-button">
+    <a class="mt-3 mb-3" [routerLink]="['/']">Back</a>
+  </div>
+</section>
