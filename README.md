@@ -2,7 +2,35 @@
 
 One Angular service for both [Google reCAPTCHA v3](https://www.google.com/recaptcha/about) and [Cloudflare Turnstile](https://www.cloudflare.com/products/turnstile). Switch providers by changing one value.
 
-![Angular Easy Captcha](https://raw.githubusercontent.com/angx-libs/ngx-easy-captcha/master/src/assets/google.PNG) ![Angular Easy Captcha](https://raw.githubusercontent.com/angx-libs/ngx-easy-captcha/master/src/assets/cloudflare.PNG)
+**[Live demo](https://angx-libs.github.io/ngx-easy-captcha/)** · [npm](https://www.npmjs.com/package/@angx/ngx-easy-captcha)
+
+### Cloudflare Turnstile
+
+Turnstile renders an interactive widget into the container you point it at — here, inside the sign-in form.
+
+![Cloudflare Turnstile widget inside the demo sign-in form, showing Success and a received token](https://raw.githubusercontent.com/angx-libs/ngx-easy-captcha/master/src/assets/cloudflare.PNG)
+
+### Google reCAPTCHA v3
+
+reCAPTCHA v3 has no challenge for the user to solve, so nothing is rendered into the form. Its only visible element is the reCAPTCHA badge pinned to the bottom-right of the page, as in the screenshot below. The token arrives on the same stream either way.
+
+![Google reCAPTCHA v3 in the demo app: no in-form widget, the reCAPTCHA badge bottom-right, and a received token](https://raw.githubusercontent.com/angx-libs/ngx-easy-captcha/master/src/assets/google.PNG)
+
+The badge is Google's, not this library's, and it appears automatically once the script loads. Google's terms let you hide it only if you show the required attribution text in its place:
+
+```css
+.grecaptcha-badge { visibility: hidden; }
+```
+
+```html
+<small>
+  This site is protected by reCAPTCHA and the Google
+  <a href="https://policies.google.com/privacy">Privacy Policy</a> and
+  <a href="https://policies.google.com/terms">Terms of Service</a> apply.
+</small>
+```
+
+`ngx-easy-captcha` removes the badge for you when the last consumer is destroyed.
 
 ## Features
 
@@ -162,7 +190,9 @@ npm start           # build the lib, then serve the demo app
 npm test            # run the library unit tests
 ```
 
-The demo app at `/cloudflare-turnstile` and `/google-recaptcha` ships with placeholder site keys — paste your own into the component `providers` to try it.
+The demo app is deployed to GitHub Pages from `master` by `.github/workflows/deploy-demo.yml`.
+
+The Turnstile page (`/cloudflare-turnstile`) works out of the box using Cloudflare's public test key. The reCAPTCHA page (`/google-recaptcha`) needs your own site key with `localhost` registered — paste it into the component's `providers`.
 
 ## Support
 
