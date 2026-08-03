@@ -1,6 +1,6 @@
 {
   "name": "@angx/ngx-easy-captcha",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "One Angular service for both Google reCAPTCHA v3 and Cloudflare Turnstile, loading each script on demand and cleaning up after itself.",
   "license": "MIT",
   "author": "Abhishek Singh",

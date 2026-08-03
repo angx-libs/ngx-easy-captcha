@@ -1,6 +1,6 @@
 {
   "name": "ngx-easy-captcha-workspace",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Demo workspace for @angx/ngx-easy-captcha",
   "license": "MIT",
   "private": true,
