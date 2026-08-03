@@ -1,27 +1,38 @@
 {
   "name": "@angx/ngx-easy-captcha",
-  "version": "2.0.0",
-  "peerDependencies": {
-    "@angular/common": "^19.2.14",
-    "@angular/core": "^19.2.14",
-    "tslib": "^2.3.0"
+  "version": "3.0.0",
+  "description": "One Angular service for both Google reCAPTCHA v3 and Cloudflare Turnstile, loading each script on demand and cleaning up after itself.",
+  "license": "MIT",
+  "author": "Abhishek Singh",
+  "homepage": "https://github.com/angx-libs/ngx-easy-captcha#readme",
+  "bugs": {
+    "url": "https://github.com/angx-libs/ngx-easy-captcha/issues"
   },
-  "dependencies": {},
-  "donations": "https://buymeacoffee.com/er.abhishek",
+  "peerDependencies": {
+    "@angular/common": "^21.0.0 || ^22.0.0",
+    "@angular/core": "^21.0.0 || ^22.0.0",
+    "rxjs": "^6.5.3 || ^7.4.0"
+  },
+  "dependencies": {
+    "tslib": "^2.8.1"
+  },
   "keywords": [
-    "ngx easy captcha",
+    "angular",
     "angular captcha",
-    "angular 18 captcha",
+    "ngx easy captcha",
     "ngx google recaptcha",
     "ngx cloudflare turnstile",
     "google recaptcha",
-    "cloudflare turnstile",
-    "angular 18 google recaptcha",
-    "angular 18 cloudflare turnstile"
+    "recaptcha v3",
+    "cloudflare turnstile"
   ],
   "sideEffects": false,
   "repository": {
     "type": "git",
-    "url": "https://github.com/angx-libs/ngx-easy-captcha.git"
+    "url": "git+https://github.com/angx-libs/ngx-easy-captcha.git"
+  },
+  "funding": {
+    "type": "buymeacoffee",
+    "url": "https://buymeacoffee.com/er.abhishek"
   }
 }

@@ -1,65 +1,25 @@
-import { Component, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { Subscription } from 'rxjs';
-import { NgClass } from '@angular/common';
-import { CAPTCHA_PROVIDER, CAPTCHA_SITE_KEY, CaptchaProvider, NgxEasyCaptchaService, STRING_INITIALIZER } from '@angx/ngx-easy-captcha';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { CaptchaProvider, provideNgxEasyCaptcha } from '@angx/ngx-easy-captcha';
+import { CaptchaExampleBase } from '../captcha-example.base';
 
 @Component({
   selector: 'app-cloudflare-turnstile-example',
-  imports: [NgClass, RouterLink],
-  providers: [NgxEasyCaptchaService,
-    { provide: CAPTCHA_PROVIDER, useValue: CaptchaProvider.CloudFlare },
-    { provide: CAPTCHA_SITE_KEY, useValue: '' }, // Enter your Cloudflare Turnstile Site Key Here
-    { provide: STRING_INITIALIZER, useValue: "cloudflare-captcha" }
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [RouterLink],
+  providers: [
+    provideNgxEasyCaptcha({
+      provider: CaptchaProvider.CloudFlare,
+      // Cloudflare's public "always passes" test key. It is documented dummy
+      // data that works on any domain, including localhost. Swap in your own.
+      siteKey: '1x00000000000000000000AA',
+      // For Turnstile the initializer is the id prefix of the host elements,
+      // so both #cloudflare-captcha-signin and #cloudflare-captcha-signup get
+      // their own widget.
+      initializer: 'cloudflare-captcha',
+    }),
   ],
   templateUrl: './cloudflare-turnstile-example.component.html',
-  styleUrl: './cloudflare-turnstile-example.component.css'
+  styleUrl: './cloudflare-turnstile-example.component.css',
 })
-export class CloudflareTurnstileExampleComponent implements OnDestroy {
-  containerClass: string = '';
-  routeSubscription!: Subscription;
-  captchaSubscription!: Subscription;
-  captchaToken!: string;
-  signInFormClass: string = ''
-  signUpFormClass: string = ''
-
-  constructor(private route: ActivatedRoute, private router: Router, private captchaService: NgxEasyCaptchaService) {
-    this.routeSubscription = this.route.fragment.subscribe(fragment => {
-      if (fragment === 'register') {
-        this.signInFormClass = 'hidden-form-mobile';
-        this.signUpFormClass = '';
-
-        this.setSignUpFormActive();
-      } else {
-        this.signInFormClass = '';
-        this.signUpFormClass = 'hidden-form-mobile';
-        this.setSignInFormActive();
-      }
-    });
-    this.captchaSubscription = this.captchaService.$.subscribe((token: string) => {
-      this.captchaToken = token;
-      console.log(token);
-    });
-  }
-
-  onSignupSubmit() {
-    if (this.captchaToken) {
-      //verify using backend call
-    }
-  }
-
-  setSignInFormActive() {
-    this.containerClass = '';
-    this.router.navigate([], { fragment: 'login' })
-  }
-
-  setSignUpFormActive() {
-    this.containerClass = 'right-panel-active';
-    this.router.navigate([], { fragment: 'register' })
-  }
-
-  ngOnDestroy(): void {
-    this.routeSubscription?.unsubscribe();
-    this.captchaSubscription?.unsubscribe();
-  }
-}
+export class CloudflareTurnstileExampleComponent extends CaptchaExampleBase {}
