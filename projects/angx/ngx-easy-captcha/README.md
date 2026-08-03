@@ -2,7 +2,17 @@
 
 One Angular service for both [Google reCAPTCHA v3](https://www.google.com/recaptcha/about) and [Cloudflare Turnstile](https://www.cloudflare.com/products/turnstile). Switch providers by changing one value.
 
-![Angular Easy Captcha](https://raw.githubusercontent.com/angx-libs/ngx-easy-captcha/master/src/assets/google.PNG) ![Angular Easy Captcha](https://raw.githubusercontent.com/angx-libs/ngx-easy-captcha/master/src/assets/cloudflare.PNG)
+**[Live demo](https://angx-libs.github.io/ngx-easy-captcha/)** · [npm](https://www.npmjs.com/package/@angx/ngx-easy-captcha)
+
+### Cloudflare Turnstile
+
+![Cloudflare Turnstile in the demo app](https://raw.githubusercontent.com/angx-libs/ngx-easy-captcha/master/src/assets/cloudflare.PNG)
+
+### Google reCAPTCHA v3
+
+reCAPTCHA v3 renders no widget — only the badge, bottom right — and the token still arrives on the same stream.
+
+![Google reCAPTCHA v3 in the demo app](https://raw.githubusercontent.com/angx-libs/ngx-easy-captcha/master/src/assets/google.PNG)
 
 ## Features
 
@@ -162,7 +172,9 @@ npm start           # build the lib, then serve the demo app
 npm test            # run the library unit tests
 ```
 
-The demo app at `/cloudflare-turnstile` and `/google-recaptcha` ships with placeholder site keys — paste your own into the component `providers` to try it.
+The demo app is deployed to GitHub Pages from `master` by `.github/workflows/deploy-demo.yml`.
+
+The Turnstile page (`/cloudflare-turnstile`) works out of the box using Cloudflare's public test key. The reCAPTCHA page (`/google-recaptcha`) needs your own site key with `localhost` registered — paste it into the component's `providers`.
 
 ## Support
 
